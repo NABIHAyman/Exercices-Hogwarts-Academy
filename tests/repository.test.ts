@@ -6,7 +6,7 @@
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { Repository, WizardRepository } from "../src/repository";
+import { Repository, SpellRepository, WizardRepository } from "../src/repository";
 import type { Entity } from "../src/types";
 
 /** Une entité de test minimale : un id (exigé par la contrainte) et un nom. */
@@ -146,5 +146,35 @@ describe("WizardRepository (exercices 1 et 2)", () => {
       ["Draco"],
     );
     assert.deepEqual(groups.Hufflepuff, []);
+  });
+});
+
+describe("SpellRepository (exercice 4)", () => {
+  it("accepte un sort valide et lui attribue un id", () => {
+    const repo = new SpellRepository();
+    const lumos = repo.add({ name: "Lumos", category: "charm", power: 5, minLevel: 1 });
+    assert.equal(lumos.id, 1);
+    assert.equal(repo.size, 1);
+  });
+
+  it("refuse un sort de puissance négative et ne stocke rien", () => {
+    const repo = new SpellRepository();
+    assert.throws(
+      () => repo.add({ name: "Broken", category: "curse", power: -1, minLevel: 1 }),
+      /Spell power cannot be negative/,
+    );
+    assert.equal(repo.size, 0);
+  });
+
+  it("filtre par catégorie", () => {
+    const repo = new SpellRepository();
+    repo.add({ name: "Lumos", category: "charm", power: 5, minLevel: 1 });
+    repo.add({ name: "Protego", category: "defense", power: 50, minLevel: 2 });
+    repo.add({ name: "Expelliarmus", category: "defense", power: 30, minLevel: 2 });
+    assert.deepEqual(
+      repo.findByCategory("defense").map((s) => s.name),
+      ["Protego", "Expelliarmus"],
+    );
+    assert.deepEqual(repo.findByCategory("healing"), []);
   });
 });

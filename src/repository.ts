@@ -3,7 +3,16 @@
  * stocker des entités, leur attribuer un identifiant, les retrouver, les mettre à jour,
  * les filtrer. Une seule implémentation pour toutes les entités du projet.
  */
-import { HOUSES, type Entity, type Wizard, type WizardsByHouse } from "./types";
+import { ValidateSpellPower } from "./decorators";
+import {
+  HOUSES,
+  type Entity,
+  type NewSpell,
+  type Spell,
+  type SpellCategory,
+  type Wizard,
+  type WizardsByHouse,
+} from "./types";
 
 /**
  * T est un paramètre de type, contraint par `extends Entity` : on ne peut stocker
@@ -97,5 +106,24 @@ export class WizardRepository extends Repository<Wizard> {
       groups[house] = this.findByHouse(house);
     }
     return groups;
+  }
+}
+
+/** Le référentiel des sorts : la création est protégée par un décorateur (exercice 4). */
+export class SpellRepository extends Repository<Spell> {
+  /**
+   * `override` : le compilateur vérifie qu'on redéfinit bien une méthode du parent.
+   * Le décorateur enveloppe la méthode : un sort de puissance négative est rejeté
+   * AVANT que le corps (donc super.add) ne s'exécute. NewSpell = Omit<Spell, "id">,
+   * la signature du parent est donc respectée.
+   */
+  @ValidateSpellPower
+  override add(data: NewSpell): Spell {
+    return super.add(data);
+  }
+
+  /** Le miroir de findByHouse pour les sorts (même recette : filter + littéraux). */
+  findByCategory(category: SpellCategory): Spell[] {
+    return this.filter((s) => s.category === category);
   }
 }
