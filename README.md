@@ -54,7 +54,8 @@ hogwarts-academy/
 │   └── workflows/
 │       └── ci.yml     # intégration continue (GitHub Actions)
 ├── src/               # le code de l'application
-│   ├── decorators.ts  # décorateurs de méthode : ValidateSpellPower, Cache (exercices 4 et 5)
+│   ├── advanced-types.ts  # types conditionnels, infer, types mappés
+│   ├── decorators.ts  # ValidateSpellPower, Cache, Log, Measure, CheckSpellAccess, Audit(…)
 │   ├── events.ts      # journal générique EventLog<E> : ofType avec Extract (exercice 3)
 │   ├── guards.ts      # gardes de type et fonction d'assertion (exercice 6)
 │   ├── index.ts       # point d'entrée provisoire (remplacé par le scénario final)
@@ -66,7 +67,7 @@ hogwarts-academy/
 │   ├── guards.test.ts # gardes de type : cas valides et triangulation des cas tordus
 │   ├── repository.test.ts # référentiel générique, inscription et requêtes par maison
 │   ├── smoke.test.ts  # test de fumée : prouve que la chaîne de test fonctionne
-│   └── types.test.ts  # tests de type du modèle (@ts-expect-error)
+│   └── types.test.ts  # tests de type : modèle, événements, types avancés (@ts-expect-error)
 ├── tsconfig.json      # configuration du compilateur TypeScript (strict, décorateurs)
 ├── eslint.config.js   # ESLint « flat config » + typescript-eslint
 ├── .prettierrc.json   # règles de formatage (120 colonnes, LF)
@@ -87,7 +88,7 @@ Le projet se construit par étapes, chacune apportant une notion du cours :
 6. ~~Décorateur de validation (exercice 4)~~ — fait
 7. ~~Décorateur de cache (exercice 5)~~ — fait
 8. ~~Gardes de type strictes (exercice 6)~~ — fait
-9. Décorateurs avancés, types conditionnels et `infer`
+9. ~~Décorateurs avancés, types conditionnels et `infer`~~ — fait
 10. Service métier et signatures d'index
 11. Scénario de démonstration de bout en bout
 

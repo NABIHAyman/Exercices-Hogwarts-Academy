@@ -1,12 +1,13 @@
 /**
  * decorators.test.ts — Tests des décorateurs de méthode, chacun isolé sur une petite
  * classe de test : on vérifie le comportement du décorateur, pas celui du référentiel
- * (qui a ses propres tests). Démarre avec ValidateSpellPower (exercice 4) ;
- * les autres décorateurs s'ajouteront aux étapes 7 et 9.
+ * (qui a ses propres tests) : ValidateSpellPower (exercice 4), Cache (exercice 5),
+ * Log, Measure, CheckSpellAccess et la fabrique Audit (au-delà des exercices).
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { Cache, ValidateSpellPower } from "../src/decorators";
+import { Audit, Cache, CheckSpellAccess, Log, Measure, ValidateSpellPower } from "../src/decorators";
+import type { Spell, Wizard } from "../src/types";
 
 /** Capture ce que console.log affiche pendant `action` (les décorateurs journalisent). */
 function captureLogs(action: () => void): string[] {
@@ -91,5 +92,93 @@ describe("@Cache (exercice 5)", () => {
     });
     assert.equal(a.calls, 1);
     assert.equal(b.calls, 1);
+  });
+});
+
+class Greeter {
+  @Log
+  greet(name: string, times: number): string {
+    return `${name} x${times}`;
+  }
+
+  @Measure
+  slow(): number {
+    let total = 0;
+    for (let i = 0; i < 10_000; i++) total += i;
+    return total;
+  }
+}
+
+describe("@Log", () => {
+  it("affiche le nom de la méthode et ses arguments, puis renvoie le résultat", () => {
+    const greeter = new Greeter();
+    let result = "";
+    const logs = captureLogs(() => {
+      result = greeter.greet("Harry", 2);
+    });
+    assert.deepEqual(logs, ['[LOG] greet("Harry", 2)']);
+    assert.equal(result, "Harry x2");
+  });
+});
+
+describe("@Measure", () => {
+  it("affiche une durée en millisecondes sans changer le résultat", () => {
+    const greeter = new Greeter();
+    let result = 0;
+    const logs = captureLogs(() => {
+      result = greeter.slow();
+    });
+    assert.equal(logs.length, 1);
+    assert.match(logs[0], /^\[TIME\] slow : \d+\.\d{2} ms$/);
+    assert.equal(result, 49_995_000);
+  });
+});
+
+class Caster {
+  @CheckSpellAccess
+  cast(wizard: Wizard, spell: Spell): string {
+    return `${wizard.name} cast ${spell.name}`;
+  }
+}
+
+describe("@CheckSpellAccess", () => {
+  const harry: Wizard = { id: 1, name: "Harry", house: "Gryffindor", level: 3, active: true };
+  const lumos: Spell = { id: 1, name: "Lumos", category: "charm", power: 5, minLevel: 1 };
+  const sectumsempra: Spell = { id: 2, name: "Sectumsempra", category: "curse", power: 90, minLevel: 6 };
+
+  it("laisse passer quand le niveau suffit", () => {
+    assert.equal(new Caster().cast(harry, lumos), "Harry cast Lumos");
+  });
+
+  it("refuse un sort restreint à un sorcier trop faible", () => {
+    assert.throws(
+      () => new Caster().cast(harry, sectumsempra),
+      /Access denied: Harry \(level 3\) cannot cast Sectumsempra \(requires level 6\)/,
+    );
+  });
+
+  it("refuse à l'exécution des arguments qui ne sont pas (Wizard, Spell)", () => {
+    const caster = new Caster();
+    // @ts-expect-error on force un mauvais argument pour vérifier la garde à l'exécution
+    assert.throws(() => caster.cast("Harry", lumos), /expects \(Wizard, Spell\)/);
+  });
+});
+
+class Registry {
+  @Audit("expulsion")
+  expel(id: number, reason: string): boolean {
+    return id === 1 && reason.length > 0;
+  }
+}
+
+describe("Audit(action) — fabrique de décorateur", () => {
+  it("journalise l'action, les arguments et le résultat APRÈS l'appel", () => {
+    const registry = new Registry();
+    let result = false;
+    const logs = captureLogs(() => {
+      result = registry.expel(1, "duel");
+    });
+    assert.equal(result, true);
+    assert.deepEqual(logs, ["[AUDIT] expulsion via expel(1, duel) -> true"]);
   });
 });

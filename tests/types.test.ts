@@ -6,6 +6,18 @@
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import type {
+  DeepReadonly,
+  ElementType,
+  EntityOf,
+  IsWizard,
+  KeysOfType,
+  Mutable,
+  Nullable,
+  ReturnOf,
+  UnwrapPromise,
+} from "../src/advanced-types";
+import type { WizardRepository } from "../src/repository";
 import {
   HOUSES,
   type AcademyEvent,
@@ -101,5 +113,45 @@ describe("événements : union discriminée, Extract et Exclude (exercice 3)", (
     }
     assert.equal(describeEvent({ type: "spell-cast", wizardId: 1, spellName: "Lumos" }), "sort Lumos");
     assert.equal(describeEvent({ type: "wizard-expelled", wizardId: 2, reason: "duel" }), "expulsion (duel)");
+  });
+});
+
+describe("types conditionnels et infer (advanced-types.ts)", () => {
+  it("EntityOf retrouve l'entité stockée par un référentiel (infer)", () => {
+    const wizard: EntityOf<WizardRepository> = { id: 1, name: "Harry", house: "Gryffindor", level: 3, active: true };
+    const check: Wizard = wizard; // compile : EntityOf<WizardRepository> EST Wizard
+    assert.equal(check.name, "Harry");
+  });
+
+  it("ElementType, UnwrapPromise, ReturnOf et IsWizard capturent avec infer", () => {
+    const element: ElementType<Wizard[]> = { id: 1, name: "Luna", house: "Ravenclaw", level: 3, active: true };
+    const unwrapped: UnwrapPromise<Promise<number>> = 42;
+    const untouched: UnwrapPromise<string> = "pas une promesse"; // branche « sinon » du conditionnel
+    const returned: ReturnOf<() => string> = "ok";
+    const isWizard: IsWizard<Wizard> = true;
+    const isNotWizard: IsWizard<Spell> = false;
+    assert.deepEqual(
+      [element.level, unwrapped, untouched, returned, isWizard, isNotWizard],
+      [3, 42, "pas une promesse", "ok", true, false],
+    );
+  });
+
+  it("KeysOfType extrait les clés numériques de Wizard", () => {
+    const keys: KeysOfType<Wizard, number>[] = ["id", "level"];
+    // @ts-expect-error "name" n'est pas une clé numérique de Wizard
+    const wrong: KeysOfType<Wizard, number> = "name";
+    assert.deepEqual([...keys, wrong], ["id", "level", "name"]);
+  });
+
+  it("Nullable, Mutable et DeepReadonly transforment champ par champ (types mappés)", () => {
+    // Nullable : un formulaire vide est représentable sans tricher avec undefined.
+    const draft: Nullable<NewWizard> = { name: null, house: null, level: null, active: null };
+    // Mutable retire les readonly que Readonly avait posés.
+    const editable: Mutable<Readonly<Spell>> = { id: 1, name: "Lumos", category: "charm", power: 5, minLevel: 1 };
+    editable.power = 10; // compile : le readonly a été retiré
+    const config: DeepReadonly<{ academy: { name: string } }> = { academy: { name: "Hogwarts" } };
+    // @ts-expect-error DeepReadonly fige aussi les champs PROFONDS
+    config.academy.name = "Durmstrang";
+    assert.deepEqual([draft.name, editable.power, config.academy.name], [null, 10, "Durmstrang"]);
   });
 });
