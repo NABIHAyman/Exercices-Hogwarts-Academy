@@ -54,9 +54,11 @@ hogwarts-academy/
 │   └── workflows/
 │       └── ci.yml     # intégration continue (GitHub Actions)
 ├── src/               # le code de l'application
-│   └── index.ts       # point d'entrée provisoire (remplacé par le scénario final)
+│   ├── index.ts       # point d'entrée provisoire (remplacé par le scénario final)
+│   └── types.ts       # modèle du domaine : House, Wizard, Spell, NewWizard, NewSpell
 ├── tests/             # les tests (node:test + node:assert/strict)
-│   └── smoke.test.ts  # test de fumée : prouve que la chaîne de test fonctionne
+│   ├── smoke.test.ts  # test de fumée : prouve que la chaîne de test fonctionne
+│   └── types.test.ts  # tests de type du modèle (@ts-expect-error)
 ├── tsconfig.json      # configuration du compilateur TypeScript (strict, décorateurs)
 ├── eslint.config.js   # ESLint « flat config » + typescript-eslint
 ├── .prettierrc.json   # règles de formatage (120 colonnes, LF)
@@ -70,7 +72,7 @@ hogwarts-academy/
 Le projet se construit par étapes, chacune apportant une notion du cours :
 
 1. ~~Intégration continue (GitHub Actions)~~ — fait
-2. Modèle du domaine (`types.ts` : littéraux, `Omit`, unions discriminées)
+2. ~~Modèle du domaine (`types.ts` : littéraux, `Omit`)~~ — fait
 3. Référentiel générique `Repository<T>` (exercice 1)
 4. Filtres et types utilitaires (`Partial`, `Record`) (exercice 2)
 5. Événements et `Extract`/`Exclude` (exercice 3)
