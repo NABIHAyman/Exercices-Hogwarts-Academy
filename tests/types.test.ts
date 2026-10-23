@@ -26,9 +26,12 @@ import {
   type House,
   type NewSpell,
   type NewWizard,
+  type FrozenSpell,
   type NonSpellEvent,
   type Spell,
   type Wizard,
+  type WizardsByHouse,
+  type WizardSummary,
 } from "../src/types";
 
 describe("House et HOUSES", () => {
@@ -153,5 +156,25 @@ describe("types conditionnels et infer (advanced-types.ts)", () => {
     // @ts-expect-error DeepReadonly fige aussi les champs PROFONDS
     config.academy.name = "Durmstrang";
     assert.deepEqual([draft.name, editable.power, config.academy.name], [null, 10, "Durmstrang"]);
+  });
+});
+
+describe("vues dérivées du service (étape 10)", () => {
+  it("FrozenSpell est en lecture seule et WizardsByHouse exige les quatre maisons", () => {
+    const frozen: FrozenSpell = { id: 1, name: "Lumos", category: "charm", power: 5, minLevel: 1 };
+    // @ts-expect-error un champ Readonly ne peut pas être réaffecté
+    frozen.power = 10;
+    // @ts-expect-error il manque Hufflepuff
+    const incomplete: WizardsByHouse = { Gryffindor: [], Slytherin: [], Ravenclaw: [] };
+    // Readonly est une barrière de COMPILATION : à l'exécution l'affectation a eu lieu.
+    assert.equal(frozen.power, 10);
+    assert.equal(Object.keys(incomplete).length, 3);
+  });
+
+  it("WizardSummary (Pick) n'expose que nom, maison et niveau", () => {
+    const summary: WizardSummary = { name: "Harry", house: "Gryffindor", level: 3 };
+    // @ts-expect-error active ne fait pas partie de la vue
+    const tooMuch: WizardSummary = { name: "Harry", house: "Gryffindor", level: 3, active: true };
+    assert.equal(summary.level, tooMuch.level);
   });
 });

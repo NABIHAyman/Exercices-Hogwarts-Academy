@@ -104,3 +104,32 @@ export type EventOfType<K extends AcademyEventType> = Extract<AcademyEvent, { ty
 
 /** Le miroir d'Extract : tous les événements SAUF les lancers de sort. */
 export type NonSpellEvent = Exclude<AcademyEvent, { type: "spell-cast" }>;
+
+// ---------------------------------------------------------------------------
+// Signatures d'index et vues dérivées, utilisées par le service (étape 10).
+// ---------------------------------------------------------------------------
+
+/** Nombre de lancers par sort : les clés (noms de sorts) ne sont pas connues d'avance. */
+export interface SpellStats {
+  [spellName: string]: number;
+}
+
+/**
+ * Configuration : deux clés connues et OBLIGATOIRES (name, maxLevel), et n'importe
+ * quelle autre clé, à condition que sa valeur respecte le type de l'index.
+ * Règle de cohérence : les clés connues doivent elles-mêmes être compatibles avec l'index.
+ */
+export interface AcademyConfig {
+  name: string;
+  maxLevel: number;
+  [key: string]: string | number | boolean;
+}
+
+/** Une mise à jour partielle de sorcier : chaque champ facultatif, l'id interdit. */
+export type WizardUpdate = Partial<Omit<Wizard, "id">>;
+
+/** Une vue réduite pour l'affichage : Pick garde SEULEMENT les clés listées. */
+export type WizardSummary = Pick<Wizard, "name" | "house" | "level">;
+
+/** Un sort figé : Readonly interdit de réaffecter chaque champ après création. */
+export type FrozenSpell = Readonly<Spell>;

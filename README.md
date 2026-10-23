@@ -54,14 +54,17 @@ hogwarts-academy/
 │   └── workflows/
 │       └── ci.yml     # intégration continue (GitHub Actions)
 ├── src/               # le code de l'application
+│   ├── academy.ts     # AcademyService : les règles métier, décorées
 │   ├── advanced-types.ts  # types conditionnels, infer, types mappés
+│   ├── data.ts        # données de démonstration + import non typé (unknown[])
 │   ├── decorators.ts  # ValidateSpellPower, Cache, Log, Measure, CheckSpellAccess, Audit(…)
 │   ├── events.ts      # journal générique EventLog<E> : ofType avec Extract (exercice 3)
 │   ├── guards.ts      # gardes de type et fonction d'assertion (exercice 6)
 │   ├── index.ts       # point d'entrée provisoire (remplacé par le scénario final)
 │   ├── repository.ts  # Repository<T>, WizardRepository, SpellRepository (exercices 1, 2, 4)
-│   └── types.ts       # modèle du domaine : House, Wizard, Spell, NewWizard, NewSpell
+│   └── types.ts       # modèle : House, Wizard, Spell, événements, signatures d'index, vues
 ├── tests/             # les tests (node:test + node:assert/strict)
+│   ├── academy.test.ts # règles métier du service et décorateurs en situation
 │   ├── decorators.test.ts # chaque décorateur isolé sur une petite classe de test
 │   ├── events.test.ts # journal d'événements et extraction typée par ofType
 │   ├── guards.test.ts # gardes de type : cas valides et triangulation des cas tordus
@@ -89,7 +92,7 @@ Le projet se construit par étapes, chacune apportant une notion du cours :
 7. ~~Décorateur de cache (exercice 5)~~ — fait
 8. ~~Gardes de type strictes (exercice 6)~~ — fait
 9. ~~Décorateurs avancés, types conditionnels et `infer`~~ — fait
-10. Service métier et signatures d'index
+10. ~~Service métier et signatures d'index~~ — fait
 11. Scénario de démonstration de bout en bout
 
 ## Licence
