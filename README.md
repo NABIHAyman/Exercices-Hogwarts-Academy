@@ -54,7 +54,7 @@ hogwarts-academy/
 │   └── workflows/
 │       └── ci.yml     # intégration continue (GitHub Actions)
 ├── src/               # le code de l'application
-│   ├── decorators.ts  # décorateurs de méthode : ValidateSpellPower (exercice 4)
+│   ├── decorators.ts  # décorateurs de méthode : ValidateSpellPower, Cache (exercices 4 et 5)
 │   ├── events.ts      # journal générique EventLog<E> : ofType avec Extract (exercice 3)
 │   ├── index.ts       # point d'entrée provisoire (remplacé par le scénario final)
 │   ├── repository.ts  # Repository<T>, WizardRepository, SpellRepository (exercices 1, 2, 4)
@@ -83,7 +83,7 @@ Le projet se construit par étapes, chacune apportant une notion du cours :
 4. ~~Filtres et types utilitaires (`Partial`, `Record`) (exercice 2)~~ — fait
 5. ~~Événements et `Extract`/`Exclude` (exercice 3)~~ — fait
 6. ~~Décorateur de validation (exercice 4)~~ — fait
-7. Décorateur de cache (exercice 5)
+7. ~~Décorateur de cache (exercice 5)~~ — fait
 8. Gardes de type strictes (exercice 6)
 9. Décorateurs avancés, types conditionnels et `infer`
 10. Service métier et signatures d'index
