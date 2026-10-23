@@ -55,10 +55,10 @@ hogwarts-academy/
 │       └── ci.yml     # intégration continue (GitHub Actions)
 ├── src/               # le code de l'application
 │   ├── index.ts       # point d'entrée provisoire (remplacé par le scénario final)
-│   ├── repository.ts  # référentiel générique Repository<T> et WizardRepository (exercice 1)
+│   ├── repository.ts  # Repository<T> générique et WizardRepository (exercices 1 et 2)
 │   └── types.ts       # modèle du domaine : House, Wizard, Spell, NewWizard, NewSpell
 ├── tests/             # les tests (node:test + node:assert/strict)
-│   ├── repository.test.ts # référentiel générique et inscription d'un sorcier
+│   ├── repository.test.ts # référentiel générique, inscription et requêtes par maison
 │   ├── smoke.test.ts  # test de fumée : prouve que la chaîne de test fonctionne
 │   └── types.test.ts  # tests de type du modèle (@ts-expect-error)
 ├── tsconfig.json      # configuration du compilateur TypeScript (strict, décorateurs)
@@ -76,7 +76,7 @@ Le projet se construit par étapes, chacune apportant une notion du cours :
 1. ~~Intégration continue (GitHub Actions)~~ — fait
 2. ~~Modèle du domaine (`types.ts` : littéraux, `Omit`)~~ — fait
 3. ~~Référentiel générique `Repository<T>` (exercice 1)~~ — fait
-4. Filtres et types utilitaires (`Partial`, `Record`) (exercice 2)
+4. ~~Filtres et types utilitaires (`Partial`, `Record`) (exercice 2)~~ — fait
 5. Événements et `Extract`/`Exclude` (exercice 3)
 6. Décorateur de validation (exercice 4)
 7. Décorateur de cache (exercice 5)

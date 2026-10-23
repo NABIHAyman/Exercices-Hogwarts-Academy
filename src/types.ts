@@ -33,6 +33,12 @@ export interface Wizard extends Entity {
  */
 export type NewWizard = Omit<Wizard, "id">;
 
+/**
+ * Les sorciers regroupés par maison (exercice 2) : Record<K, V> construit un objet
+ * dont les clés sont exactement les membres de K — les quatre maisons, obligatoirement.
+ */
+export type WizardsByHouse = Record<House, Wizard[]>;
+
 /** Les catégories de sorts : même technique de littéraux que House. */
 export type SpellCategory = "charm" | "curse" | "defense" | "healing";
 

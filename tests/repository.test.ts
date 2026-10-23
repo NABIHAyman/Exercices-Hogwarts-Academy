@@ -1,7 +1,8 @@
 /**
- * repository.test.ts — Tests du référentiel générique (exercice 1).
+ * repository.test.ts — Tests du référentiel générique (exercices 1 et 2).
  * Le référentiel est testé avec une entité inventée (Potion) : la preuve qu'il ne
- * connaît ni les sorciers ni les sorts, puis avec WizardRepository pour l'exercice 1.
+ * connaît ni les sorciers ni les sorts ; puis WizardRepository couvre l'inscription
+ * (exercice 1) et les requêtes par maison (exercice 2).
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -56,9 +57,40 @@ describe("Repository<T> (exercice 1)", () => {
     const invalid = new Repository<{ name: string }>();
     assert.ok(invalid instanceof Repository);
   });
+
+  it("met à jour partiellement, sans jamais changer l'id (exercice 2)", () => {
+    const repo = new Repository<Potion>();
+    const potion = repo.add({ name: "Veritaserum" });
+    assert.deepEqual(repo.update(potion.id, { name: "Amortentia" }), { id: 1, name: "Amortentia" });
+    assert.equal(repo.update(42, { name: "x" }), undefined);
+    // @ts-expect-error l'id n'est pas dans le patch : Partial<Omit<T, "id">> le refuse
+    repo.update(potion.id, { id: 5 });
+    // Même si le patch fautif s'exécute, l'id réaffirmé en dernier reste 1.
+    assert.equal(repo.findById(1)?.name, "Amortentia");
+  });
+
+  it("supprime une entité et dit si elle existait (exercice 2)", () => {
+    const repo = new Repository<Potion>();
+    const potion = repo.add({ name: "Veritaserum" });
+    assert.equal(repo.remove(potion.id), true);
+    assert.equal(repo.remove(potion.id), false);
+    assert.equal(repo.findById(potion.id), undefined);
+    assert.equal(repo.size, 0);
+  });
+
+  it("filtre avec un prédicat typé (exercice 2)", () => {
+    const repo = new Repository<Potion>();
+    repo.add({ name: "Amortentia" });
+    repo.add({ name: "Polynectar" });
+    repo.add({ name: "Aiguise-Méninges" });
+    assert.deepEqual(
+      repo.filter((p) => p.name.startsWith("A")).map((p) => p.name),
+      ["Amortentia", "Aiguise-Méninges"],
+    );
+  });
 });
 
-describe("WizardRepository (exercice 1)", () => {
+describe("WizardRepository (exercices 1 et 2)", () => {
   it("inscrit un sorcier sans id et le retrouve, complet, par l'id attribué", () => {
     const repo = new WizardRepository();
     const harry = repo.add({ name: "Harry Potter", house: "Gryffindor", level: 3, active: true });
@@ -71,5 +103,48 @@ describe("WizardRepository (exercice 1)", () => {
       active: true,
     });
     assert.equal(repo.size, 1);
+  });
+
+  /** Trois sorciers de maisons différentes, dont un inactif : le décor de l'exercice 2. */
+  function setup(): WizardRepository {
+    const repo = new WizardRepository();
+    repo.add({ name: "Harry", house: "Gryffindor", level: 3, active: true });
+    repo.add({ name: "Luna", house: "Ravenclaw", level: 3, active: true });
+    repo.add({ name: "Draco", house: "Slytherin", level: 4, active: false });
+    return repo;
+  }
+
+  it("filtre par maison (exercice 2)", () => {
+    const repo = setup();
+    assert.deepEqual(
+      repo.findByHouse("Gryffindor").map((w) => w.name),
+      ["Harry"],
+    );
+    assert.deepEqual(repo.findByHouse("Hufflepuff"), []);
+  });
+
+  it("refuse une maison inconnue à la compilation (type à accès indexé)", () => {
+    const repo = setup();
+    // @ts-expect-error "Durmstrang" n'est pas une House : Wizard["house"] le refuse
+    assert.deepEqual(repo.findByHouse("Durmstrang"), []);
+  });
+
+  it("ne liste que les sorciers actifs", () => {
+    assert.deepEqual(
+      setup()
+        .findActive()
+        .map((w) => w.name),
+      ["Harry", "Luna"],
+    );
+  });
+
+  it("regroupe par maison en prévoyant les quatre maisons, même vides (Record)", () => {
+    const groups = setup().groupByHouse();
+    assert.deepEqual(Object.keys(groups), ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"]);
+    assert.deepEqual(
+      groups.Slytherin.map((w) => w.name),
+      ["Draco"],
+    );
+    assert.deepEqual(groups.Hufflepuff, []);
   });
 });
