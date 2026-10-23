@@ -1,0 +1,10 @@
+# Jamais formatés : code généré, dépendances, lockfile (géré par npm),
+# documentation du cours et rapports d'étape (hors du dépôt).
+out/
+node_modules/
+package-lock.json
+Bulk/
+_rapports/
+.claude/
+CLAUDE.md
+CLAUDE.local.md

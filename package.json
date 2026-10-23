@@ -1,0 +1,31 @@
+{
+  "name": "hogwarts-academy",
+  "version": "1.0.0",
+  "description": "Hogwarts Academy — application en ligne de commande TypeScript (module Développement Web Front Avancé, EHEIM S9)",
+  "main": "out/src/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node out/src/index.js",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "tsc && node --test \"out/tests/**/*.test.js\"",
+    "test:watch": "node --test --watch \"out/tests/**/*.test.js\"",
+    "verify": "npm run format:check && npm run lint && npm run typecheck && npm test"
+  },
+  "author": "Ayman NABIH",
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.20.5",
+    "eslint": "^10.13.0",
+    "prettier": "^3.9.10",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.2"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -1,0 +1,2 @@
+# Fins de ligne normalisées : LF dans le dépôt, quel que soit le système d'exploitation.
+* text=auto eol=lf

@@ -1,0 +1,19 @@
+# Dépendances installées et code généré par tsc : se régénèrent, ne se versionnent pas.
+node_modules/
+out/
+
+# Documentation du cours et rapports d'étape : hors du dépôt rendu.
+Bulk/
+_rapports/
+
+# Outillage local.
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+.vscode/
+
+# Fichiers système et secrets.
+.DS_Store
+Thumbs.db
+*.log
+.env*
