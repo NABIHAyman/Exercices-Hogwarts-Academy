@@ -1,5 +1,7 @@
 # Hogwarts Academy — projet TypeScript
 
+[![CI](https://github.com/NABIHAyman/Exercices-Hogwarts-Academy/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/NABIHAyman/Exercices-Hogwarts-Academy/actions/workflows/ci.yml)
+
 Projet du module **Développement Web Front Avancé** (EHEIM, 5e année Génie Informatique option IA, S9 2026-2027), Pr. Mohammed IMAHRAIN.
 Auteur : **Ayman NABIH**.
 
@@ -36,10 +38,21 @@ npm test             # compile puis lance les tests (node:test, sans bibliothèq
 | `npm run test:watch` | relance les tests à chaque changement                                       |
 | `npm run verify`     | la vérification complète : formatage, lint, types, tests                    |
 
+## Intégration continue
+
+Le workflow [`ci.yml`](.github/workflows/ci.yml) rejoue la vérification complète sur une machine neuve
+(Ubuntu) à chaque push et chaque pull request, sur **Node 22 et 24** : installation reproductible
+(`npm ci`), formatage, lint, types, compilation, tests, audit des dépendances
+(`npm audit --audit-level=high`), puis contrôle que la CI n'a modifié aucun fichier suivi
+(`git status --porcelain` vide). Le badge en haut de ce fichier reflète l'état de `main`.
+
 ## Structure
 
 ```
 hogwarts-academy/
+├── .github/
+│   └── workflows/
+│       └── ci.yml     # intégration continue (GitHub Actions)
 ├── src/               # le code de l'application
 │   └── index.ts       # point d'entrée provisoire (remplacé par le scénario final)
 ├── tests/             # les tests (node:test + node:assert/strict)
@@ -56,7 +69,7 @@ hogwarts-academy/
 
 Le projet se construit par étapes, chacune apportant une notion du cours :
 
-1. Intégration continue (GitHub Actions)
+1. ~~Intégration continue (GitHub Actions)~~ — fait
 2. Modèle du domaine (`types.ts` : littéraux, `Omit`, unions discriminées)
 3. Référentiel générique `Repository<T>` (exercice 1)
 4. Filtres et types utilitaires (`Partial`, `Record`) (exercice 2)

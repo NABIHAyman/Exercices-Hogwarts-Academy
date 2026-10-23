@@ -1,0 +1,76 @@
+# Intégration continue : rejoue sur une machine neuve (Ubuntu) la même vérification que
+# `npm run verify` en local, sur deux versions de Node, à chaque push et chaque pull request.
+# Si une étape échoue, le commit est signalé rouge sur GitHub : main ne doit rester que verte.
+name: CI
+
+on:
+  push: # toutes les branches
+  pull_request: # toutes les pull requests
+  workflow_dispatch: # lancement manuel depuis l'onglet Actions
+
+# Moindre privilège : le jeton du workflow ne peut que LIRE le dépôt.
+permissions:
+  contents: read
+
+# Un seul run par branche : un nouveau push annule le run précédent encore en cours.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+
+jobs:
+  quality:
+    name: Qualité (Node ${{ matrix.node }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false # on veut le verdict des deux versions de Node, même si l'une échoue
+      matrix:
+        node: [22, 24] # Node 20 est en fin de vie et son `node --test` ignore les motifs glob
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false # aucun jeton laissé dans la copie de travail
+
+      - name: Installer Node ${{ matrix.node }}
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm # met en cache ~/.npm à partir du package-lock.json
+
+      - name: Installer les dépendances (reproductible, depuis le lockfile)
+        run: npm ci
+
+      - name: Formatage (Prettier)
+        run: npm run format:check
+
+      - name: Lint (ESLint)
+        run: npm run lint
+
+      - name: Types (tsc --noEmit)
+        run: npm run typecheck
+
+      - name: Compilation
+        run: npm run build
+
+      - name: Tests (node:test)
+        run: node --test --test-reporter=spec "out/tests/**/*.test.js"
+
+      - name: Audit des dépendances (vulnérabilités élevées et critiques)
+        run: npm audit --audit-level=high
+
+      - name: Arbre de travail propre (git status --porcelain)
+        # Si une étape a modifié ou créé un fichier suivi (formatage oublié, lockfile
+        # désynchronisé, fichier généré non ignoré), --porcelain n'est pas vide :
+        # la CI échoue et affiche la liste.
+        run: |
+          changes="$(git status --porcelain)"
+          if [ -n "$changes" ]; then
+            echo "::error::La CI a modifié des fichiers suivis par Git :"
+            echo "$changes"
+            exit 1
+          fi
+          echo "Arbre de travail propre."
