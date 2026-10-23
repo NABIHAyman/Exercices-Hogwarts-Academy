@@ -52,3 +52,52 @@ export interface Spell extends Entity {
 
 /** Un sort à créer : même logique que NewWizard. */
 export type NewSpell = Omit<Spell, "id">;
+
+// ---------------------------------------------------------------------------
+// Événements (exercice 3) : une union DISCRIMINÉE par le champ littéral `type`.
+// Chaque membre porte le même champ `type` avec une valeur littérale différente :
+// il suffit de tester `event.type` pour que TypeScript réduise l'union au bon membre.
+// ---------------------------------------------------------------------------
+
+/** Un sorcier vient d'être inscrit. */
+export interface WizardEnrolledEvent {
+  type: "wizard-enrolled";
+  wizardId: number;
+  house: House;
+}
+
+/** Un sort vient d'être lancé : l'événement vedette de l'exercice 3. */
+export interface SpellCastEvent {
+  type: "spell-cast";
+  wizardId: number;
+  spellName: string;
+}
+
+/** Un sorcier vient de monter de niveau. */
+export interface LevelUpEvent {
+  type: "level-up";
+  wizardId: number;
+  newLevel: number;
+}
+
+/** Un sorcier vient d'être expulsé. */
+export interface WizardExpelledEvent {
+  type: "wizard-expelled";
+  wizardId: number;
+  reason: string;
+}
+
+/** Tout ce qui peut arriver dans l'académie : l'union des quatre événements. */
+export type AcademyEvent = WizardEnrolledEvent | SpellCastEvent | LevelUpEvent | WizardExpelledEvent;
+
+/** Les valeurs possibles du discriminant (accès indexé sur une union). */
+export type AcademyEventType = AcademyEvent["type"];
+
+/**
+ * Exercice 3 : Extract<U, M> garde les membres de l'union U compatibles avec M.
+ * EventOfType<"spell-cast"> = SpellCastEvent, calculé au lieu d'être recopié.
+ */
+export type EventOfType<K extends AcademyEventType> = Extract<AcademyEvent, { type: K }>;
+
+/** Le miroir d'Extract : tous les événements SAUF les lancers de sort. */
+export type NonSpellEvent = Exclude<AcademyEvent, { type: "spell-cast" }>;

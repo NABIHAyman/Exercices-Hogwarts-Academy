@@ -54,10 +54,12 @@ hogwarts-academy/
 │   └── workflows/
 │       └── ci.yml     # intégration continue (GitHub Actions)
 ├── src/               # le code de l'application
+│   ├── events.ts      # journal générique EventLog<E> : ofType avec Extract (exercice 3)
 │   ├── index.ts       # point d'entrée provisoire (remplacé par le scénario final)
 │   ├── repository.ts  # Repository<T> générique et WizardRepository (exercices 1 et 2)
 │   └── types.ts       # modèle du domaine : House, Wizard, Spell, NewWizard, NewSpell
 ├── tests/             # les tests (node:test + node:assert/strict)
+│   ├── events.test.ts # journal d'événements et extraction typée par ofType
 │   ├── repository.test.ts # référentiel générique, inscription et requêtes par maison
 │   ├── smoke.test.ts  # test de fumée : prouve que la chaîne de test fonctionne
 │   └── types.test.ts  # tests de type du modèle (@ts-expect-error)
@@ -77,7 +79,7 @@ Le projet se construit par étapes, chacune apportant une notion du cours :
 2. ~~Modèle du domaine (`types.ts` : littéraux, `Omit`)~~ — fait
 3. ~~Référentiel générique `Repository<T>` (exercice 1)~~ — fait
 4. ~~Filtres et types utilitaires (`Partial`, `Record`) (exercice 2)~~ — fait
-5. Événements et `Extract`/`Exclude` (exercice 3)
+5. ~~Événements et `Extract`/`Exclude` (exercice 3)~~ — fait
 6. Décorateur de validation (exercice 4)
 7. Décorateur de cache (exercice 5)
 8. Gardes de type strictes (exercice 6)

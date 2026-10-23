@@ -6,7 +6,18 @@
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { HOUSES, type Entity, type House, type NewSpell, type NewWizard, type Spell, type Wizard } from "../src/types";
+import {
+  HOUSES,
+  type AcademyEvent,
+  type Entity,
+  type EventOfType,
+  type House,
+  type NewSpell,
+  type NewWizard,
+  type NonSpellEvent,
+  type Spell,
+  type Wizard,
+} from "../src/types";
 
 describe("House et HOUSES", () => {
   it("le type House n'accepte que les quatre maisons", () => {
@@ -54,5 +65,41 @@ describe("Spell et NewSpell", () => {
     const badCategory: NewSpell = { name: "Polynectar", category: "potion", power: 10, minLevel: 4 };
     assert.equal(lumos.category, "charm");
     assert.equal(badCategory.minLevel, 4);
+  });
+});
+
+describe("événements : union discriminée, Extract et Exclude (exercice 3)", () => {
+  it("EventOfType extrait de l'union le membre voulu", () => {
+    const cast: EventOfType<"spell-cast"> = { type: "spell-cast", wizardId: 1, spellName: "Lumos" };
+    const levelUp: EventOfType<"level-up"> = { type: "level-up", wizardId: 1, newLevel: 4 };
+    assert.equal(cast.spellName, "Lumos");
+    assert.equal(levelUp.newLevel, 4);
+  });
+
+  it("NonSpellEvent exclut les lancers de sort", () => {
+    const other: NonSpellEvent = { type: "level-up", wizardId: 1, newLevel: 2 };
+    const cast: EventOfType<"spell-cast"> = { type: "spell-cast", wizardId: 1, spellName: "Lumos" };
+    // @ts-expect-error un lancer de sort n'est pas un NonSpellEvent
+    const wrong: NonSpellEvent = cast;
+    assert.deepEqual([other.type, wrong.type], ["level-up", "spell-cast"]);
+  });
+
+  it("le discriminant `type` réduit l'union dans un switch exhaustif", () => {
+    // Dans chaque case, TypeScript SAIT quel membre de l'union est en main :
+    // event.house, event.spellName… compilent sans vérification supplémentaire.
+    function describeEvent(event: AcademyEvent): string {
+      switch (event.type) {
+        case "wizard-enrolled":
+          return `inscription (${event.house})`;
+        case "spell-cast":
+          return `sort ${event.spellName}`;
+        case "level-up":
+          return `niveau ${event.newLevel}`;
+        case "wizard-expelled":
+          return `expulsion (${event.reason})`;
+      }
+    }
+    assert.equal(describeEvent({ type: "spell-cast", wizardId: 1, spellName: "Lumos" }), "sort Lumos");
+    assert.equal(describeEvent({ type: "wizard-expelled", wizardId: 2, reason: "duel" }), "expulsion (duel)");
   });
 });
