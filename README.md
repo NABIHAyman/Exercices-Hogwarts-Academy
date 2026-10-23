@@ -56,12 +56,14 @@ hogwarts-academy/
 ├── src/               # le code de l'application
 │   ├── decorators.ts  # décorateurs de méthode : ValidateSpellPower, Cache (exercices 4 et 5)
 │   ├── events.ts      # journal générique EventLog<E> : ofType avec Extract (exercice 3)
+│   ├── guards.ts      # gardes de type et fonction d'assertion (exercice 6)
 │   ├── index.ts       # point d'entrée provisoire (remplacé par le scénario final)
 │   ├── repository.ts  # Repository<T>, WizardRepository, SpellRepository (exercices 1, 2, 4)
 │   └── types.ts       # modèle du domaine : House, Wizard, Spell, NewWizard, NewSpell
 ├── tests/             # les tests (node:test + node:assert/strict)
 │   ├── decorators.test.ts # chaque décorateur isolé sur une petite classe de test
 │   ├── events.test.ts # journal d'événements et extraction typée par ofType
+│   ├── guards.test.ts # gardes de type : cas valides et triangulation des cas tordus
 │   ├── repository.test.ts # référentiel générique, inscription et requêtes par maison
 │   ├── smoke.test.ts  # test de fumée : prouve que la chaîne de test fonctionne
 │   └── types.test.ts  # tests de type du modèle (@ts-expect-error)
@@ -84,7 +86,7 @@ Le projet se construit par étapes, chacune apportant une notion du cours :
 5. ~~Événements et `Extract`/`Exclude` (exercice 3)~~ — fait
 6. ~~Décorateur de validation (exercice 4)~~ — fait
 7. ~~Décorateur de cache (exercice 5)~~ — fait
-8. Gardes de type strictes (exercice 6)
+8. ~~Gardes de type strictes (exercice 6)~~ — fait
 9. Décorateurs avancés, types conditionnels et `infer`
 10. Service métier et signatures d'index
 11. Scénario de démonstration de bout en bout

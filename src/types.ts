@@ -42,6 +42,9 @@ export type WizardsByHouse = Record<House, Wizard[]>;
 /** Les catégories de sorts : même technique de littéraux que House. */
 export type SpellCategory = "charm" | "curse" | "defense" | "healing";
 
+/** Le jumeau runtime de SpellCategory, pour la garde isSpellCategory (exercice 6). */
+export const SPELL_CATEGORIES: readonly SpellCategory[] = ["charm", "curse", "defense", "healing"];
+
 /** Un sort du grimoire. */
 export interface Spell extends Entity {
   name: string;
