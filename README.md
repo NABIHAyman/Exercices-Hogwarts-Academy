@@ -8,7 +8,11 @@ Auteur : **Ayman NABIH**.
 Une application en ligne de commande qui gère les sorciers, les sorts et les événements d'une académie de magie.
 Le projet met en pratique les notions TypeScript du cours — génériques, types utilitaires, signatures d'index,
 gardes de type, décorateurs de méthode, types conditionnels et `infer` — ainsi que les six exercices
-« Hogwarts Academy » des slides.
+« Hogwarts Academy » des slides. `npm start` déroule un scénario de démonstration en sept sections,
+et 78 tests `node:test` couvrent chaque notion.
+
+Le projet a été construit par étapes — outillage, intégration continue, puis une notion du cours par
+commit : l'historique Git retrace la progression.
 
 ## Prérequis
 
@@ -79,21 +83,41 @@ hogwarts-academy/
 └── package.json       # scripts npm et dépendances de développement
 ```
 
-## Feuille de route
+## Notions du cours → où les trouver
 
-Le projet se construit par étapes, chacune apportant une notion du cours :
+| Notion                                                                                                  | Fichier(s)                                                 |
+| ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| Génériques (`Repository<T extends Entity>`, `EventLog<E>`)                                              | `src/repository.ts`, `src/events.ts`                       |
+| Types utilitaires (`Omit`, `Partial`, `Pick`, `Record`, `Readonly`, `Extract`, `Exclude`, `ReturnType`) | `src/types.ts`, `src/repository.ts`, `src/main.ts`         |
+| Signatures d'index (`SpellStats`, `AcademyConfig`, `countByType`)                                       | `src/types.ts`, `src/events.ts`                            |
+| Types littéraux et gardes de type                                                                       | `src/types.ts`, `src/guards.ts`                            |
+| Décorateurs de méthode (et fabrique `Audit(…)`)                                                         | `src/decorators.ts`, `src/repository.ts`, `src/academy.ts` |
+| Types conditionnels, `infer`, types mappés                                                              | `src/advanced-types.ts`, `src/events.ts`                   |
 
-1. ~~Intégration continue (GitHub Actions)~~ — fait
-2. ~~Modèle du domaine (`types.ts` : littéraux, `Omit`)~~ — fait
-3. ~~Référentiel générique `Repository<T>` (exercice 1)~~ — fait
-4. ~~Filtres et types utilitaires (`Partial`, `Record`) (exercice 2)~~ — fait
-5. ~~Événements et `Extract`/`Exclude` (exercice 3)~~ — fait
-6. ~~Décorateur de validation (exercice 4)~~ — fait
-7. ~~Décorateur de cache (exercice 5)~~ — fait
-8. ~~Gardes de type strictes (exercice 6)~~ — fait
-9. ~~Décorateurs avancés, types conditionnels et `infer`~~ — fait
-10. ~~Service métier et signatures d'index~~ — fait
-11. ~~Scénario de démonstration de bout en bout~~ — fait
+## Les six exercices du cours
+
+| Exercice                                    | Où le trouver                                                           |
+| ------------------------------------------- | ----------------------------------------------------------------------- |
+| 1. Ajouter un sorcier sans id (`NewWizard`) | `Repository.add(Omit<T, "id">)` — `src/repository.ts`                   |
+| 2. Filtrer par maison                       | `WizardRepository.findByHouse(Wizard["house"])` — `src/repository.ts`   |
+| 3. Événement de sort (`Extract`)            | `EventOfType<K>` — `src/types.ts` ; `EventLog.ofType` — `src/events.ts` |
+| 4. Valider la puissance d'un sort           | `@ValidateSpellPower` — `src/decorators.ts`, sur `SpellRepository.add`  |
+| 5. Méthode mise en cache                    | `@Cache` (WeakMap + Map par instance) — `src/decorators.ts`             |
+| 6. Garde de type stricte                    | `isHouse` et ses semblables — `src/guards.ts`                           |
+
+## Les tests comme spécification
+
+78 tests `node:test` (aucune bibliothèque de test externe) :
+
+| Fichier                    | Tests | Ce qu'il spécifie                                                  |
+| -------------------------- | ----- | ------------------------------------------------------------------ |
+| `tests/academy.test.ts`    | 18    | les règles métier du service, les décorateurs en situation réelle  |
+| `tests/repository.test.ts` | 16    | le référentiel générique et ses spécialisations                    |
+| `tests/types.test.ts`      | 15    | le modèle et les types avancés (tests de type, `@ts-expect-error`) |
+| `tests/guards.test.ts`     | 13    | les gardes de type : cas valides et triangulation des cas tordus   |
+| `tests/decorators.test.ts` | 11    | chaque décorateur, isolé sur une petite classe de test             |
+| `tests/events.test.ts`     | 4     | le journal d'événements générique                                  |
+| `tests/scenario.test.ts`   | 1     | le scénario complet, de bout en bout                               |
 
 ## Licence
 
