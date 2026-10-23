@@ -2,10 +2,10 @@
   "name": "hogwarts-academy",
   "version": "1.0.0",
   "description": "Hogwarts Academy — application en ligne de commande TypeScript (module Développement Web Front Avancé, EHEIM S9)",
-  "main": "out/src/index.js",
+  "main": "out/src/main.js",
   "scripts": {
     "build": "tsc",
-    "start": "node out/src/index.js",
+    "start": "node out/src/main.js",
     "dev": "tsc --watch",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
